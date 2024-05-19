@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
 
-void main() => runApp(RandomNumberGeneratorApp());
+void main() => runApp(const RandomNumberGeneratorApp());
 
 class RandomNumberGeneratorApp extends StatelessWidget {
+  const RandomNumberGeneratorApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light().copyWith(
-        textTheme: TextTheme(
+        textTheme: const TextTheme(
           bodyLarge: TextStyle(fontFamily: 'Poppins'),
           bodyMedium: TextStyle(fontFamily: 'Poppins'),
           titleLarge: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w500),
@@ -17,7 +19,7 @@ class RandomNumberGeneratorApp extends StatelessWidget {
         ),
       ),
       darkTheme: ThemeData.dark().copyWith(
-        textTheme: TextTheme(
+        textTheme: const TextTheme(
           bodyLarge: TextStyle(fontFamily: 'Poppins'),
           bodyMedium: TextStyle(fontFamily: 'Poppins'),
           titleLarge: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w500),
@@ -25,12 +27,14 @@ class RandomNumberGeneratorApp extends StatelessWidget {
         ),
       ),
       themeMode: ThemeMode.system,
-      home: RandomNumberGeneratorScreen(),
+      home: const RandomNumberGeneratorScreen(),
     );
   }
 }
 
 class RandomNumberGeneratorScreen extends StatefulWidget {
+  const RandomNumberGeneratorScreen({super.key});
+
   @override
   _RandomNumberGeneratorScreenState createState() =>
       _RandomNumberGeneratorScreenState();
@@ -58,8 +62,8 @@ class _RandomNumberGeneratorScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 117, 65, 126),
-        title: Center(
+        backgroundColor: const Color.fromARGB(255, 117, 65, 126),
+        title: const Center(
             child: Text(
           'Randy',
           style: TextStyle(fontSize: 32),
@@ -74,18 +78,18 @@ class _RandomNumberGeneratorScreenState
                 Expanded(
                   child: TextField(
                     controller: _minController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Min Value',
                       border: OutlineInputBorder(),
                     ),
                     keyboardType: TextInputType.number,
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Expanded(
                   child: TextField(
                     controller: _maxController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Max Value',
                       border: OutlineInputBorder(),
                     ),
@@ -94,7 +98,7 @@ class _RandomNumberGeneratorScreenState
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text('Number of Random Numbers: $_numOfRandomNumbers'),
             Slider(
               value: _numOfRandomNumbers.toDouble(),
@@ -108,13 +112,13 @@ class _RandomNumberGeneratorScreenState
                 });
               },
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: _generateRandomNumbers,
-              icon: Icon(Icons.shuffle),
-              label: Text('Generate'),
+              icon: const Icon(Icons.shuffle),
+              label: const Text('Generate'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
                 itemCount: _randomNumbers.length,
