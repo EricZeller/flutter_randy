@@ -32,10 +32,12 @@ class RandomNumberGeneratorApp extends StatelessWidget {
 
 class RandomNumberGeneratorScreen extends StatefulWidget {
   @override
-  _RandomNumberGeneratorScreenState createState() => _RandomNumberGeneratorScreenState();
+  _RandomNumberGeneratorScreenState createState() =>
+      _RandomNumberGeneratorScreenState();
 }
 
-class _RandomNumberGeneratorScreenState extends State<RandomNumberGeneratorScreen> {
+class _RandomNumberGeneratorScreenState
+    extends State<RandomNumberGeneratorScreen> {
   int _numOfRandomNumbers = 1;
   final TextEditingController _minController = TextEditingController();
   final TextEditingController _maxController = TextEditingController();
@@ -47,7 +49,8 @@ class _RandomNumberGeneratorScreenState extends State<RandomNumberGeneratorScree
     final Random random = Random();
 
     setState(() {
-      _randomNumbers = List.generate(_numOfRandomNumbers, (_) => min + random.nextInt(max - min + 1));
+      _randomNumbers = List.generate(
+          _numOfRandomNumbers, (_) => min + random.nextInt(max - min + 1));
     });
   }
 
@@ -55,7 +58,12 @@ class _RandomNumberGeneratorScreenState extends State<RandomNumberGeneratorScree
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Randy')),
+        backgroundColor: Color.fromARGB(255, 117, 65, 126),
+        title: Center(
+            child: Text(
+          'Randy',
+          style: TextStyle(fontSize: 32),
+        )),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -101,9 +109,10 @@ class _RandomNumberGeneratorScreenState extends State<RandomNumberGeneratorScree
               },
             ),
             SizedBox(height: 20),
-            ElevatedButton(
+            ElevatedButton.icon(
               onPressed: _generateRandomNumbers,
-              child: Text('Generate Random Numbers'),
+              icon: Icon(Icons.shuffle),
+              label: Text('Generate'),
             ),
             SizedBox(height: 20),
             Expanded(
@@ -112,7 +121,8 @@ class _RandomNumberGeneratorScreenState extends State<RandomNumberGeneratorScree
                 itemBuilder: (context, index) {
                   return Card(
                     child: ListTile(
-                      title: Text('Random Number ${index + 1}: ${_randomNumbers[index]}'),
+                      title: Text(
+                          'Random Number ${index + 1}: ${_randomNumbers[index]}'),
                     ),
                   );
                 },
