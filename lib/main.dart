@@ -12,7 +12,7 @@ class RandomNumberGeneratorApp extends StatelessWidget {
         textTheme: TextTheme(
           bodyLarge: TextStyle(fontFamily: 'Poppins'),
           bodyMedium: TextStyle(fontFamily: 'Poppins'),
-          titleLarge: TextStyle(fontFamily: 'Poppins'),
+          titleLarge: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w500),
           // Füge weitere Textstile hinzu, falls benötigt
         ),
       ),
@@ -20,7 +20,7 @@ class RandomNumberGeneratorApp extends StatelessWidget {
         textTheme: TextTheme(
           bodyLarge: TextStyle(fontFamily: 'Poppins'),
           bodyMedium: TextStyle(fontFamily: 'Poppins'),
-          titleLarge: TextStyle(fontFamily: 'Poppins'),
+          titleLarge: TextStyle(fontFamily: 'Poppins', fontWeight: FontWeight.w500),
           // Füge weitere Textstile hinzu, falls benötigt
         ),
       ),
