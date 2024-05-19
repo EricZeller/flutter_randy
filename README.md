@@ -1,16 +1,21 @@
-# flutter_randy
 
-A new Flutter project.
+## Randy in Flutter
 
-## Getting Started
+Randy is a simple application that generates a random number between two specified values. Whether you need a random number for a game, a raffle, or any other purpose, Randy has got you covered!
 
-This project is a starting point for a Flutter application.
+## How it works
 
-A few resources to get you started if this is your first Flutter project:
+Randy is straightforward to use. You simply input two values - a minimum and a maximum - and Randy will generate a random number within that range for you.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Features
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Generate random numbers within a specified range.
+- Easy-to-use interface.
+- Quick and efficient.
+
+## Usage
+
+1. Open the Randy app.
+2. Enter the minimum and maximum values.
+3. Click the "Generate"/"New one" button.
+4. Randy will display a random number between the specified range.
