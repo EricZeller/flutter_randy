@@ -124,7 +124,7 @@ class _RandomNumberGeneratorScreenState
             const SizedBox(height: 20),
             Text('Number of Random Numbers: $_numOfRandomNumbers'),
             Slider(
-              inactiveColor: Theme.of(context).colorScheme.onSecondary,
+              inactiveColor: Theme.of(context).colorScheme.inversePrimary,
               value: _numOfRandomNumbers.toDouble(),
               min: 1,
               max: 100,
