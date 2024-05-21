@@ -18,9 +18,9 @@ class RandomNumberGeneratorApp extends StatelessWidget {
           lightColorScheme = lightDynamic.harmonized();
           darkColorScheme = darkDynamic.harmonized();
         } else {
-          lightColorScheme = ColorScheme.fromSeed(seedColor: Colors.blue);
+          lightColorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
           darkColorScheme = ColorScheme.fromSeed(
-              seedColor: Colors.blue, brightness: Brightness.dark);
+              seedColor: Colors.deepPurple, brightness: Brightness.dark);
         }
 
         return MaterialApp(
