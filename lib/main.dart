@@ -90,7 +90,7 @@ class _RandomNumberGeneratorScreenState
   }
 
   final Uri _githubUrl =
-      Uri.parse('https://github.com/EricZeller/flutter-randy');
+      Uri.parse('https://github.com/EricZeller/flutter_randy');
 
   @override
   Widget build(BuildContext context) {
