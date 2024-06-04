@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'dart:math';
-
 import 'package:url_launcher/url_launcher.dart';
+import 'package:yaml/yaml.dart';
 
 void main() => runApp(const RandomNumberGeneratorApp());
 
@@ -91,6 +92,8 @@ class _RandomNumberGeneratorScreenState
 
   final Uri _githubUrl =
       Uri.parse('https://github.com/EricZeller/flutter_randy');
+  final Uri _issueUrl =
+      Uri.parse('https://github.com/EricZeller/flutter_randy/issues');
 
   @override
   Widget build(BuildContext context) {
@@ -98,24 +101,56 @@ class _RandomNumberGeneratorScreenState
       appBar: AppBar(
         centerTitle: true,
         title: Text(
-          'Randy',
+          'Randy v2',
           style: TextStyle(
               fontWeight: FontWeight.w400,
               fontSize: 36,
               color: Theme.of(context).colorScheme.onPrimaryContainer),
         ),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        actions: [
-          IconButton(
-            onPressed: () => Navigator.pushNamed(context, '/about'),
-            icon: const Icon(Icons.info_outline),
-            tooltip: "About",
-          ),
-          IconButton(
-            onPressed: () => _launchUrl(_githubUrl),
-            icon: const Icon(Icons.data_object),
-            tooltip: "Source",
-          ),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: (String result) {
+              switch (result) {
+                case 'about':
+                  Navigator.pushNamed(
+                    context,
+                    '/about',
+                  );
+                  break;
+                case 'source_code':
+                  _launchUrl(_githubUrl);
+                  break;
+                case 'bug_report':
+                  _launchUrl(_issueUrl);
+                  break;
+              }
+            },
+            icon: const Icon(Icons.more_vert),
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'about',
+                child: ListTile(
+                  title: Text('About'),
+                  leading: Icon(Icons.info_outline),
+                ),
+              ),
+              const PopupMenuItem<String>(
+                value: 'source_code',
+                child: ListTile(
+                  title: Text('Source'),
+                  leading: Icon(Icons.data_array_rounded),
+                ),
+              ),
+              const PopupMenuItem<String>(
+                value: 'bug_report',
+                child: ListTile(
+                  title: Text('Bug report'),
+                  leading: Icon(Icons.bug_report_outlined),
+                ),
+              ),
+            ],
+          )
         ],
       ),
       body: Padding(
@@ -208,164 +243,183 @@ class _RandomNumberGeneratorScreenState
   }
 }
 
+Future<String> getAppVersion() async {
+  final pubspec = await rootBundle.loadString('pubspec.yaml');
+  final yamlMap = loadYaml(pubspec);
+  final version = yamlMap['version'] as String;
+  final pureVersion = version.split('+').first; // Entfernt die Build-Nummer
+  return pureVersion;
+}
+
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return DynamicColorBuilder(
-        builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
-      ColorScheme lightColorScheme;
-      ColorScheme darkColorScheme;
+    return FutureBuilder<String>(
+      future: getAppVersion(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        final version = snapshot.data!;
+        return DynamicColorBuilder(
+            builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
+          ColorScheme lightColorScheme;
+          ColorScheme darkColorScheme;
 
-      if (lightDynamic != null && darkDynamic != null) {
-        lightColorScheme = lightDynamic.harmonized();
-        darkColorScheme = darkDynamic.harmonized();
-      } else {
-        lightColorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
-        darkColorScheme = ColorScheme.fromSeed(
-            seedColor: Colors.deepPurple, brightness: Brightness.dark);
-      }
+          if (lightDynamic != null && darkDynamic != null) {
+            lightColorScheme = lightDynamic.harmonized();
+            darkColorScheme = darkDynamic.harmonized();
+          } else {
+            lightColorScheme =
+                ColorScheme.fromSeed(seedColor: Colors.deepPurple);
+            darkColorScheme = ColorScheme.fromSeed(
+                seedColor: Colors.deepPurple, brightness: Brightness.dark);
+          }
 
-      return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: lightColorScheme,
-          textTheme: TextTheme(
-            bodyLarge: TextStyle(
-                fontFamily: 'Poppins',
-                color: Theme.of(context).colorScheme.onPrimaryContainer),
-            bodyMedium: TextStyle(
-                fontFamily: 'Poppins',
-                color: Theme.of(context).colorScheme.onPrimaryContainer),
-            bodySmall: TextStyle(
-                fontFamily: 'Poppins',
-                color: Theme.of(context).colorScheme.onPrimaryContainer),
-            titleLarge: TextStyle(
-                fontFamily: 'Poppins',
-                color: Theme.of(context).colorScheme.onPrimaryContainer),
-            titleMedium: TextStyle(
-                fontFamily: 'Poppins',
-                color: Theme.of(context).colorScheme.onPrimaryContainer),
-            titleSmall: TextStyle(
-                fontFamily: 'Poppins',
-                color: Theme.of(context).colorScheme.onPrimaryContainer),
-          ),
-        ),
-        darkTheme: ThemeData(
-          useMaterial3: true,
-          colorScheme: darkColorScheme,
-          textTheme: TextTheme(
-            bodyLarge: TextStyle(
-                fontFamily: 'Poppins',
-                color: Theme.of(context).colorScheme.onPrimaryContainer),
-            bodyMedium: TextStyle(
-                fontFamily: 'Poppins',
-                color: Theme.of(context).colorScheme.onPrimaryContainer),
-            bodySmall: TextStyle(
-                fontFamily: 'Poppins',
-                color: Theme.of(context).colorScheme.onPrimaryContainer),
-            titleLarge: TextStyle(
-                fontFamily: 'Poppins',
-                color: Theme.of(context).colorScheme.onPrimaryContainer),
-            titleMedium: TextStyle(
-                fontFamily: 'Poppins',
-                color: Theme.of(context).colorScheme.onPrimaryContainer),
-            titleSmall: TextStyle(
-                fontFamily: 'Poppins',
-                color: Theme.of(context).colorScheme.onPrimaryContainer),
-          ),
-        ),
-        themeMode: ThemeMode.system,
-        home: Scaffold(
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-          appBar: AppBar(
-            foregroundColor: Theme.of(context).colorScheme.surfaceTint,
-            backgroundColor: Theme.of(context).colorScheme.surfaceDim,
-            leading: IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.arrow_back_ios)),
-            title: const Text("About"),
-          ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'About This App',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 16.0),
-                Text(
-                  'This app is designed to generate random numbers within a specified range. You can select the number of random numbers to generate and specify the range for the random numbers. This app uses Flutter, a powerful framework for building cross-platform apps with a single codebase.',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 16.0),
-                Text(
-                  'Features',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  '• Generate random numbers within a specified range\n'
-                  '• Select the number of random numbers to generate\n'
-                  '• Beautiful and responsive design\n'
-                  '• Supports light and dark themes\n'
-                  '• Uses Material 3 design principles',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 16.0),
-                Text(
-                  'How to Use',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  '1. Enter the minimum value in the Min Value field.\n'
-                  '2. Enter the maximum value in the Max Value field.\n'
-                  '3. Use the slider to select the number of random numbers to generate.\n'
-                  '4. Press the "Generate Random Numbers" button to generate the numbers.\n'
-                  '5. The generated random numbers will be displayed in a list below the button.',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 16.0),
-                Text(
-                  'About the Developer',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  'This app was developed by [Your Name], a passionate Flutter developer who loves creating beautiful and functional applications. For more information, visit [your website or contact information].',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 16.0),
-                Text(
-                  'Acknowledgements',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  'Special thanks to the Flutter community for their support and contributions. This app would not have been possible without the amazing resources and documentation provided by the Flutter team.',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 16.0),
-                Text(
-                  'License',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8.0),
-                Text(
-                  'This project is licensed under the GPL v3 License - see the LICENSE file in the GitHub repository for details.',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 16.0),
-              ],
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              useMaterial3: true,
+              colorScheme: lightColorScheme,
+              textTheme: TextTheme(
+                bodyLarge: TextStyle(
+                    fontFamily: 'Poppins',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+                bodyMedium: TextStyle(
+                    fontFamily: 'Poppins',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+                bodySmall: TextStyle(
+                    fontFamily: 'Poppins',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+                titleLarge: TextStyle(
+                    fontFamily: 'Poppins',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+                titleMedium: TextStyle(
+                    fontFamily: 'Poppins',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+                titleSmall: TextStyle(
+                    fontFamily: 'Poppins',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+              ),
             ),
-          ),
-        ),
-      );
-    });
+            darkTheme: ThemeData(
+              useMaterial3: true,
+              colorScheme: darkColorScheme,
+              textTheme: TextTheme(
+                bodyLarge: TextStyle(
+                    fontFamily: 'Poppins',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+                bodyMedium: TextStyle(
+                    fontFamily: 'Poppins',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+                bodySmall: TextStyle(
+                    fontFamily: 'Poppins',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+                titleLarge: TextStyle(
+                    fontFamily: 'Poppins',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+                titleMedium: TextStyle(
+                    fontFamily: 'Poppins',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+                titleSmall: TextStyle(
+                    fontFamily: 'Poppins',
+                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+              ),
+            ),
+            themeMode: ThemeMode.system,
+            home: Scaffold(
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+              appBar: AppBar(
+                foregroundColor: Theme.of(context).colorScheme.surfaceTint,
+                backgroundColor: Theme.of(context).colorScheme.surfaceDim,
+                leading: IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.arrow_back_ios)),
+                title: const Text("About"),
+              ),
+              body: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text("Version $version"),
+                    Text(
+                      'About This App',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 16.0),
+                    Text(
+                      'This app is designed to generate random numbers within a specified range. You can select the number of random numbers to generate and specify the range for the random numbers. This app uses Flutter, a powerful framework for building cross-platform apps with a single codebase.',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 16.0),
+                    Text(
+                      'Features',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8.0),
+                    Text(
+                      '• Generate random numbers within a specified range\n'
+                      '• Select the number of random numbers to generate\n'
+                      '• Beautiful and responsive design\n'
+                      '• Supports light and dark themes\n'
+                      '• Uses Material 3 design principles',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 16.0),
+                    Text(
+                      'How to Use',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8.0),
+                    Text(
+                      '1. Enter the minimum value in the Min Value field.\n'
+                      '2. Enter the maximum value in the Max Value field.\n'
+                      '3. Use the slider to select the number of random numbers to generate.\n'
+                      '4. Press the "Generate Random Numbers" button to generate the numbers.\n'
+                      '5. The generated random numbers will be displayed in a list below the button.',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 16.0),
+                    Text(
+                      'About the Developer',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8.0),
+                    Text(
+                      'This app was developed by [Your Name], a passionate Flutter developer who loves creating beautiful and functional applications. For more information, visit [your website or contact information].',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 16.0),
+                    Text(
+                      'Acknowledgements',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8.0),
+                    Text(
+                      'Special thanks to the Flutter community for their support and contributions. This app would not have been possible without the amazing resources and documentation provided by the Flutter team.',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 16.0),
+                    Text(
+                      'License',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8.0),
+                    Text(
+                      'This project is licensed under the GPL v3 License - see the LICENSE file in the GitHub repository for details.',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 16.0),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
+      },
+    );
   }
 }
