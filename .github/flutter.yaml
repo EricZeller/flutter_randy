@@ -1,0 +1,89 @@
+name: Build & Release Desktop Apps
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    defaults:
+      run:
+        shell: bash
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from pubspec.yaml
+        id: version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.6'
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build
+        run: |
+          if [ ${{ matrix.os }} = ubuntu-latest ]; then
+            sudo apt-get update
+            sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+            flutter build linux --release
+            flutter build apk --release
+            mv build/app/outputs/flutter-apk/app-release.apk \
+             build/randyflutter_v${{ steps.version.outputs.version }}_android_arm64.apk
+            cd build/linux/x64/release/bundle
+            tar -cJf ../../../../flutterrandy_v${{ steps.version.outputs.version }}_linux_x64.tar.xz ./*
+          elif [ ${{ matrix.os }} = windows-latest ]; then
+            choco install zip
+            flutter build windows --release
+            cd build/windows/x64/runner/Release
+            zip -r ../../../../flutterrandy_v${{ steps.version.outputs.version }}_windows_x64.zip ./*
+          elif [ ${{ matrix.os }} = macos-latest ]; then
+            npm install -g appdmg
+            flutter build macos --release
+            sudo codesign -s - --force --deep --timestamp --options runtime "build/macos/Build/Products/Release/Randy in Flutter.app"
+            appdmg installers/dmg_creator/config.json build/flutterrandy_v${{ steps.version.outputs.version }}_macos_x64.dmg
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: randyinflutter-${{ matrix.os }}-build
+          path: |
+            build/randyflutter*.zip
+            build/randyflutter*.tar.xz
+            build/randyflutter*.dmg
+            build/randyflutter*.apk
+            
+      - name: Get latest release tag
+        id: tag
+        run: |
+          TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifacts to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          files: |
+            build/randyflutter_v${{ steps.version.outputs.version }}_linux_x64.tar.xz
+            build/randyflutter_v${{ steps.version.outputs.version }}_windows_x64.zip
+            build/randyflutter_v${{ steps.version.outputs.version }}_macos_x64.dmg
+            build/randyflutter_v${{ steps.version.outputs.version }}_android_arm64.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
