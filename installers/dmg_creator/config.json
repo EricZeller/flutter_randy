@@ -1,5 +1,5 @@
 {
-    "title": "Randy in Flutter",
+    "title": "Randy v2",
     "icon": "./AppIcon.icns",
     "contents": [
       { "x": 448, "y": 144, "type": "link", "path": "/Applications" },
