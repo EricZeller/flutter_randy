@@ -41,9 +41,6 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
             flutter build linux --release
-            flutter build apk --release
-            mv build/app/outputs/flutter-apk/app-release.apk \
-             build/randyv2_v${{ steps.version.outputs.version }}_android_arm64.apk
             cd build/linux/x64/release/bundle
             tar -cJf ../../../../randyv2_v${{ steps.version.outputs.version }}_linux_x64.tar.xz ./*
           elif [ ${{ matrix.os }} = windows-latest ]; then
@@ -66,7 +63,6 @@ jobs:
             build/randyv2*.zip
             build/randyv2*.tar.xz
             build/randyv2*.dmg
-            build/randyv2*.apk
             
       - name: Get latest release tag
         id: tag
@@ -84,6 +80,5 @@ jobs:
             build/randyv2_v${{ steps.version.outputs.version }}_linux_x64.tar.xz
             build/randyv2_v${{ steps.version.outputs.version }}_windows_x64.zip
             build/randyv2_v${{ steps.version.outputs.version }}_macos_x64.dmg
-            build/randyv2_v${{ steps.version.outputs.version }}_android_arm64.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
