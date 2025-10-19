@@ -3,6 +3,7 @@ name: Build & Release Signed APK
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -55,9 +56,18 @@ jobs:
           path: |
             build/app/outputs/flutter-apk/randyv2*.apk
 
-      - name: Upload APK to GitHub Release
+      - name: Get latest release tag
+        id: tag
+        run: |
+          TAG=$(gh release list --limit 1 --json tagName --jq '.[0].tagName')
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload artifacts to Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ steps.tag.outputs.tag }}
           files: build/app/outputs/flutter-apk/randyv2_v${{ steps.version.outputs.version }}_android_arm64.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
