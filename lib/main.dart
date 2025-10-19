@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'dart:math';
 
+import 'package:flutter/services.dart';
+
 void main() => runApp(const RandomNumberGeneratorApp());
 
 class RandomNumberGeneratorApp extends StatelessWidget {
@@ -87,7 +89,14 @@ class _RandomNumberGeneratorScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Randy', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 36, color: Theme.of(context).colorScheme.onPrimaryContainer),)),
+        title: Center(
+            child: Text(
+          'Randy',
+          style: TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 36,
+              color: Theme.of(context).colorScheme.onPrimaryContainer),
+        )),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
       body: Padding(
@@ -151,10 +160,35 @@ class _RandomNumberGeneratorScreenState
                 itemBuilder: (context, index) {
                   return Card(
                     child: ListTile(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
                       title: Text(
-                          'Random Number ${index + 1}: ${_randomNumbers[index]}', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer),),
-                      tileColor: Theme.of(context).colorScheme.secondaryContainer,
+                        'Number ${index + 1}: ${_randomNumbers[index]}',
+                        style: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSecondaryContainer),
+                      ),
+                      tileColor:
+                          Theme.of(context).colorScheme.secondaryContainer,
+                      trailing: IconButton(
+                        icon: Icon(
+                          Icons.copy,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSecondaryContainer,
+                        ),
+                        onPressed: () {
+                          Clipboard.setData(ClipboardData(
+                              text: _randomNumbers[index].toString()));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  'Copied ${_randomNumbers[index]} to clipboard'),
+                            ),
+                          );
+                        },
+                      ),
                     ),
                   );
                 },
