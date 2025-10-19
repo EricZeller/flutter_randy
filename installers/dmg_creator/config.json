@@ -1,8 +1,8 @@
 {
     "title": "Randy in Flutter",
-    "icon": "./logo.icns",
+    "icon": "./AppIcon.icns",
     "contents": [
-      { "x": 448, "y": 344, "type": "link", "path": "/Applications" },
-      { "x": 192, "y": 344, "type": "file", "path": "../../build/macos/Build/Products/Release/Randy in Flutter.app" }
+      { "x": 448, "y": 144, "type": "link", "path": "/Applications" },
+      { "x": 192, "y": 144, "type": "file", "path": "../../build/macos/Build/Products/Release/Randy in Flutter.app" }
     ]
   }

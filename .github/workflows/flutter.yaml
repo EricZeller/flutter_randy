@@ -43,19 +43,19 @@ jobs:
             flutter build linux --release
             flutter build apk --release
             mv build/app/outputs/flutter-apk/app-release.apk \
-             build/randyflutter_v${{ steps.version.outputs.version }}_android_arm64.apk
+             build/randyv2_v${{ steps.version.outputs.version }}_android_arm64.apk
             cd build/linux/x64/release/bundle
-            tar -cJf ../../../../randyflutter_v${{ steps.version.outputs.version }}_linux_x64.tar.xz ./*
+            tar -cJf ../../../../randyv2_v${{ steps.version.outputs.version }}_linux_x64.tar.xz ./*
           elif [ ${{ matrix.os }} = windows-latest ]; then
             choco install zip
             flutter build windows --release
             cd build/windows/x64/runner/Release
-            zip -r ../../../../randyflutter_v${{ steps.version.outputs.version }}_windows_x64.zip ./*
+            zip -r ../../../../randyv2_v${{ steps.version.outputs.version }}_windows_x64.zip ./*
           elif [ ${{ matrix.os }} = macos-latest ]; then
             npm install -g appdmg
             flutter build macos --release
             sudo codesign -s - --force --deep --timestamp --options runtime "build/macos/Build/Products/Release/Randy in Flutter.app"
-            appdmg installers/dmg_creator/config.json build/randyflutter_v${{ steps.version.outputs.version }}_macos_x64.dmg
+            appdmg installers/dmg_creator/config.json build/randyv2_v${{ steps.version.outputs.version }}_macos_x64.dmg
           fi
 
       - name: Upload build artifacts
@@ -63,10 +63,10 @@ jobs:
         with:
           name: randyinflutter-${{ matrix.os }}-build
           path: |
-            build/randyflutter*.zip
-            build/randyflutter*.tar.xz
-            build/randyflutter*.dmg
-            build/randyflutter*.apk
+            build/randyv2*.zip
+            build/randyv2*.tar.xz
+            build/randyv2*.dmg
+            build/randyv2*.apk
             
       - name: Get latest release tag
         id: tag
@@ -81,9 +81,9 @@ jobs:
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
           files: |
-            build/randyflutter_v${{ steps.version.outputs.version }}_linux_x64.tar.xz
-            build/randyflutter_v${{ steps.version.outputs.version }}_windows_x64.zip
-            build/randyflutter_v${{ steps.version.outputs.version }}_macos_x64.dmg
-            build/randyflutter_v${{ steps.version.outputs.version }}_android_arm64.apk
+            build/randyv2_v${{ steps.version.outputs.version }}_linux_x64.tar.xz
+            build/randyv2_v${{ steps.version.outputs.version }}_windows_x64.zip
+            build/randyv2_v${{ steps.version.outputs.version }}_macos_x64.dmg
+            build/randyv2_v${{ steps.version.outputs.version }}_android_arm64.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
