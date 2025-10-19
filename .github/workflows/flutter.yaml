@@ -1,4 +1,4 @@
-name: Build & Release Desktop Apps
+name: Build & Release Android & Desktop Apps
 
 on:
   release:
@@ -45,17 +45,17 @@ jobs:
             mv build/app/outputs/flutter-apk/app-release.apk \
              build/randyflutter_v${{ steps.version.outputs.version }}_android_arm64.apk
             cd build/linux/x64/release/bundle
-            tar -cJf ../../../../flutterrandy_v${{ steps.version.outputs.version }}_linux_x64.tar.xz ./*
+            tar -cJf ../../../../randyflutter_v${{ steps.version.outputs.version }}_linux_x64.tar.xz ./*
           elif [ ${{ matrix.os }} = windows-latest ]; then
             choco install zip
             flutter build windows --release
             cd build/windows/x64/runner/Release
-            zip -r ../../../../flutterrandy_v${{ steps.version.outputs.version }}_windows_x64.zip ./*
+            zip -r ../../../../randyflutter_v${{ steps.version.outputs.version }}_windows_x64.zip ./*
           elif [ ${{ matrix.os }} = macos-latest ]; then
             npm install -g appdmg
             flutter build macos --release
             sudo codesign -s - --force --deep --timestamp --options runtime "build/macos/Build/Products/Release/Randy in Flutter.app"
-            appdmg installers/dmg_creator/config.json build/flutterrandy_v${{ steps.version.outputs.version }}_macos_x64.dmg
+            appdmg installers/dmg_creator/config.json build/randyflutter_v${{ steps.version.outputs.version }}_macos_x64.dmg
           fi
 
       - name: Upload build artifacts
